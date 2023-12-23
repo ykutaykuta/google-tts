@@ -17,8 +17,12 @@ class GoogleTTS:
         self.__key: str = "AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM"
         self.__language_code: str = "vi-VN"
         self.__ssml_gender: SsmlGender = SsmlGender.FEMALE
+
         self.__audio_encoding: AudioEncoding = AudioEncoding.MP3
+        self.__pitch: float = 0.0
+        self.__volume_gain_db: float = 0.0
         self.__sample_rate_hertz: int = 48000
+        self.__effects_profile_id: AudioProfileID | None = None
         self.__speaking_rate: float = 1.0
 
     def set_key(self, key: str):
@@ -39,6 +43,15 @@ class GoogleTTS:
     def set_speaking_rate(self, rate: float):
         self.__speaking_rate = rate
 
+    def set_pitch(self, pitch: float):
+        self.__pitch = pitch
+
+    def set_volume_gain_db(self, volume_gain_db: float):
+        self.__volume_gain_db = volume_gain_db
+
+    def set_effects_profile_id(self, effects_profile_id: AudioProfileID | None):
+        self.__effects_profile_id = effects_profile_id
+
     def __prepare_body(self, text: str) -> dict:
         _input: dict = {"text": text}
         _voice: dict = {
@@ -47,8 +60,13 @@ class GoogleTTS:
         }
         _audioConfig: dict = {
             "audioEncoding": self.__audio_encoding,
+            "speakingRate": self.__speaking_rate,
+            "pitch": self.__pitch,
+            "volumeGainDb": self.__volume_gain_db,
             "sampleRateHertz": self.__sample_rate_hertz,
-            "speakingRate": self.__speaking_rate
+            "effectsProfileId": [
+                self.__effects_profile_id
+            ]
         }
         body: dict = {
             "input": _input,
