@@ -60,6 +60,13 @@ class GoogleTTS:
     def set_synthesis_type(self, synthesis_type: SynthesisType):
         self.__synthesis_type = synthesis_type
 
+    def get_voices(self) -> dict:
+        api_url = "https://texttospeech.googleapis.com/v1/voices"
+
+        headers = self.__prepare_headers()
+        params = self.__prepare_params()
+        return requests.get(api_url, params=params, headers=headers).json()
+
     def __prepare_body(self, text: str) -> dict:
         _input: dict = {
             self.__synthesis_type: text
