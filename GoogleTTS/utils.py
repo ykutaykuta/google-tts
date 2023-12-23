@@ -40,3 +40,8 @@ class AudioProfileID(str, Enum):
     LARGE_BLUETOOTH_SPEAKER_CLASS_DEVICE = "large-home-entertainment-class-device"
     LARGE_AUTOMOTIVE_CLASS_DEVICE = "large-automotive-class-device"
     TELEPHONY_CLASS_DEVICE = "telephony-class-application"
+
+
+class SynthesisType(str, Enum):
+    TEXT = "text"
+    SSML = "ssml"

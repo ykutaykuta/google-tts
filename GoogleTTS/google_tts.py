@@ -15,6 +15,8 @@ class GoogleTTS:
         self.__url = "https://content-texttospeech.googleapis.com/v1/text:synthesize"
         self.__x_referer = "https://explorer.apis.google.com"
         self.__key: str = "AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM"
+        self.__synthesis_type: SynthesisType = SynthesisType.TEXT
+        self.__speaker_name: str = "vi-VN-Standard-A"
         self.__language_code: str = "vi-VN"
         self.__ssml_gender: SsmlGender = SsmlGender.FEMALE
 
@@ -37,6 +39,9 @@ class GoogleTTS:
     def set_audio_encoding(self, encoding: AudioEncoding):
         self.__audio_encoding = encoding
 
+    def set_speaker_name(self, name: str):
+        self.__speaker_name = name
+
     def set_sample_rate(self, rate: int):
         self.__sample_rate_hertz = rate
 
@@ -52,10 +57,16 @@ class GoogleTTS:
     def set_effects_profile_id(self, effects_profile_id: AudioProfileID | None):
         self.__effects_profile_id = effects_profile_id
 
+    def set_synthesis_type(self, synthesis_type: SynthesisType):
+        self.__synthesis_type = synthesis_type
+
     def __prepare_body(self, text: str) -> dict:
-        _input: dict = {"text": text}
+        _input: dict = {
+            self.__synthesis_type: text
+        }
         _voice: dict = {
             "languageCode": self.__language_code,
+            "name": self.__speaker_name,
             "ssmlGender": self.__ssml_gender
         }
         _audioConfig: dict = {
