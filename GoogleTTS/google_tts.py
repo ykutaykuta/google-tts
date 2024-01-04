@@ -15,10 +15,16 @@ class GoogleTTS:
         self.__url = "https://content-texttospeech.googleapis.com/v1/text:synthesize"
         self.__x_referer = "https://explorer.apis.google.com"
         self.__key: str = "AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM"
+        self.__synthesis_type: SynthesisType = SynthesisType.TEXT
+        self.__speaker_name: str = "vi-VN-Standard-A"
         self.__language_code: str = "vi-VN"
         self.__ssml_gender: SsmlGender = SsmlGender.FEMALE
+
         self.__audio_encoding: AudioEncoding = AudioEncoding.MP3
+        self.__pitch: float = 0.0
+        self.__volume_gain_db: float = 0.0
         self.__sample_rate_hertz: int = 48000
+        self.__effects_profile_id: AudioProfileID | None = None
         self.__speaking_rate: float = 1.0
 
     def set_key(self, key: str):
@@ -33,22 +39,52 @@ class GoogleTTS:
     def set_audio_encoding(self, encoding: AudioEncoding):
         self.__audio_encoding = encoding
 
+    def set_speaker_name(self, name: str):
+        self.__speaker_name = name
+
     def set_sample_rate(self, rate: int):
         self.__sample_rate_hertz = rate
 
     def set_speaking_rate(self, rate: float):
         self.__speaking_rate = rate
 
+    def set_pitch(self, pitch: float):
+        self.__pitch = pitch
+
+    def set_volume_gain_db(self, volume_gain_db: float):
+        self.__volume_gain_db = volume_gain_db
+
+    def set_effects_profile_id(self, effects_profile_id: AudioProfileID | None):
+        self.__effects_profile_id = effects_profile_id
+
+    def set_synthesis_type(self, synthesis_type: SynthesisType):
+        self.__synthesis_type = synthesis_type
+
+    def get_voices(self) -> dict:
+        api_url = "https://texttospeech.googleapis.com/v1/voices"
+
+        headers = self.__prepare_headers()
+        params = self.__prepare_params()
+        return requests.get(api_url, params=params, headers=headers).json()
+
     def __prepare_body(self, text: str) -> dict:
-        _input: dict = {"text": text}
+        _input: dict = {
+            self.__synthesis_type: text
+        }
         _voice: dict = {
             "languageCode": self.__language_code,
+            "name": self.__speaker_name,
             "ssmlGender": self.__ssml_gender
         }
         _audioConfig: dict = {
             "audioEncoding": self.__audio_encoding,
+            "speakingRate": self.__speaking_rate,
+            "pitch": self.__pitch,
+            "volumeGainDb": self.__volume_gain_db,
             "sampleRateHertz": self.__sample_rate_hertz,
-            "speakingRate": self.__speaking_rate
+            "effectsProfileId": [
+                self.__effects_profile_id
+            ]
         }
         body: dict = {
             "input": _input,
